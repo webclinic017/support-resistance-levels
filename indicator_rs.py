@@ -11,16 +11,15 @@ class RSIndricator(bt.Indicator):
     '''
     lines = ('support', 'resistance',)  # indicator's lines
 
-    def __init__(self, bars_count: int, rs_distance: float, date_back_range: int):
-        '''
-        :param bars_count: количество архивных свечей для построения индикатора
-        :param rs_distance: дельта расстояния между экстремумами (насколько близки должны быть точки, чтобы считались одним уровнем)
-        :param date_back_range: ограничение по сроку в прошлое (нужно 100 баров, есть ли они в пределах 2х дней, если нет, взять меньше баров)
-        '''
-        self.bars_count = bars_count
-        self.rs_distance = rs_distance
-        self.date_back_range = date_back_range
+    params = (
+        ('bars_count', 10),
+        ('rs_distance', 10),
+        ('date_back_range', 10),
+    )
+    #:param bars_count: количество архивных свечей для построения индикатора
+    #:param rs_distance: дельта расстояния между экстремумами (насколько близки должны быть точки, чтобы считались одним уровнем)
+    #:param date_back_range: ограничение по сроку в прошлое (нужно 100 баров, есть ли они в пределах 2х дней, если нет, взять меньше баров)
 
     def next(self):
-        self.lines.support[0] = 0  # TODO: has to be redefined using RawPriceClusterLevels
-        self.lines.resistance[0] = 0  # TODO: has to be redefined using RawPriceClusterLevels
+        self.lines.support[0] = 5  # TODO: has to be redefined using RawPriceClusterLevels
+        self.lines.resistance[0] = 5  # TODO: has to be redefined using RawPriceClusterLevels
