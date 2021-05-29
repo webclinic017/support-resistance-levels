@@ -19,3 +19,6 @@ class RSIndricator(bt.Indicator):
         self.bars_count = bars_count
         self.rs_distance = rs_distance
         self.date_back_range = date_back_range
+
+    def next(self):
+        pass
