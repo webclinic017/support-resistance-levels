@@ -3,7 +3,6 @@
 
 import backtrader as bt  # Импортируем backtrader
 from pricelevels.cluster import RawPriceClusterLevels
-from pricelevels.visualization.levels_on_candlestick import plot_levels_on_candlestick
 
 
 class RSIndricator(bt.Indicator):
@@ -23,5 +22,5 @@ class RSIndricator(bt.Indicator):
         self.date_back_range = date_back_range
 
     def next(self):
-        self.lines.support[0] = 0  # TODO: has to be redefined
-        self.lines.resistance[0] = 0  # TODO: has to be redefined
+        self.lines.support[0] = 0  # TODO: has to be redefined using RawPriceClusterLevels
+        self.lines.resistance[0] = 0  # TODO: has to be redefined using RawPriceClusterLevels
