@@ -8,4 +8,5 @@ class RSIndricator(bt.Indicator):
     '''
     Класс индикатора линиий поддержки и сопротивления Backtrader
     '''
-    pass
+    def __init__(self):
+        pass
