@@ -6,16 +6,25 @@ import backtrader as bt  # Импортируем backtrader
 from pricelevels.cluster import RawPriceClusterLevels
 
 
-def convert_to_df(data):
+def cut_and_convert_to_df(data, size):
     '''
     Convert backtrader Datafeed(datas) to Pandas DataFrame (format for RawPriceClusterLevels)
+    :param size: size of a new dataset
     :param data: data for converting (self.datas[0] - in Indicator)
-    :return: data in pandas df
+    :return: cuted data in pandas df
     '''
     # Process of preparing data
     rowData = pd.DataFrame(columns=['Datetime', 'Open', 'High', 'Low', 'Close', 'Volume'])
+    dataAsDict = dict()  # TODO: have to pass param which defines amount of bars before now to calculate levels
+    dataAsDict['open'] = data.open.get(size=size)
+    dataAsDict['high'] = data.high.get(size=size)
+    dataAsDict['low'] = data.low.get(size=size)
+    dataAsDict['close'] = data.close.get(size=size)
+    dataAsDict['volume'] = data.volume.get(size=size)
+    dataAsDict['datetime'] = data.datetime.get(size=size)
+
+
     for i, candle in enumerate(data):
-        # print(i)
         rowData = rowData.append({
             'Datetime': data.datetime.date(i),
             'Open': data.open[i],
@@ -59,7 +68,10 @@ class RSIndricator(bt.Indicator):
         #self.lines.resistance[0] = 0
 
     def next(self):
-        df_data = convert_to_df(self.datas[0])
+        df_data = cut_and_convert_to_df(self.data, 21)  # TODO: parameter 21
+        if df_data.size == 0:
+            return
+
         self.clsp.fit(df_data)
         self.clrs.fit(df_data)
 
