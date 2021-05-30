@@ -20,14 +20,23 @@ if __name__ == '__main__':
     datapath = os.path.join(modpath, 'datas/orcl-1995-2014.txt')
 
     # Create a Data Feed
-    data = bt.feeds.YahooFinanceCSVData(
+    data = bt.feeds.GenericCSVData(
         dataname=datapath,
-        # Do not pass values before this date
-        fromdate=datetime.datetime(2000, 1, 3),
-        # Do not pass values before this date
-        todate=datetime.datetime(2000, 1, 20),
-        # Do not pass values after this date
-        reverse=False)
+
+        fromdate=datetime.datetime(2000, 1, 1),
+        todate=datetime.datetime(2000, 12, 31),
+
+        nullvalue=0.0,
+
+        dtformat=('%Y-%m-%d'),
+
+        datetime=0,
+        high=2,
+        low=3,
+        open=1,
+        close=4,
+        volume=6,
+    )
 
     # Add the Data Feed to Cerebro
     cerebro.adddata(data)

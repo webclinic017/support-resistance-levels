@@ -45,6 +45,8 @@ class RSIndricator(bt.Indicator):
     plotinfo = dict(subplot=False)  # Для отрисовки Индикатора на основном графике
 
     def __init__(self):
+        df_data = convert_to_df(self.datas[0])
+
         self.csv_data = pd.read_csv('datas/orcl-1995-2014.txt')
         self.clsp = RawPriceClusterLevels(None, merge_percent=0.25, use_maximums=True, bars_for_peak=91)
         self.clrs = RawPriceClusterLevels(None, merge_percent=0.25, use_maximums=False, bars_for_peak=91)
