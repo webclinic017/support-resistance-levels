@@ -63,9 +63,6 @@ class RSIndricator(bt.Indicator):
         self.clsp.fit(df_data)
         self.clrs.fit(df_data)
 
-        self.prev_rs = self.clrs.levels
-        self.prev_sp = self.clsp.levels
-
         self.cnt += 1
         if self.datas[0].close[-1] <= self.datas[0].open[-1]:
             highPrice = self.datas[0].open[-1]
