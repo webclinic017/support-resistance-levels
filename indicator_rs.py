@@ -52,6 +52,9 @@ class RSIndricator(bt.Indicator):
         self.cnt = 0
         self.supportVal = 0
         self.resistVal = 0
+
+        self.prev_rs = []
+        self.prev_sp = []
         #self.lines.support[0] = 0
         #self.lines.resistance[0] = 0
 
@@ -59,6 +62,10 @@ class RSIndricator(bt.Indicator):
         df_data = convert_to_df(self.datas[0])
         self.clsp.fit(df_data)
         self.clrs.fit(df_data)
+
+        self.prev_rs = self.clrs.levels
+        self.prev_sp = self.clsp.levels
+
         self.cnt += 1
         if self.datas[0].close[-1] <= self.datas[0].open[-1]:
             highPrice = self.datas[0].open[-1]
@@ -66,12 +73,47 @@ class RSIndricator(bt.Indicator):
         else:
             highPrice = self.datas[0].close[-1]
             lowPrice = self.datas[0].open[-1]
-        if not(self.clsp.levels is None or self.clrs.levels is None):
-            self.supportVal = min(v['price'] for v in self.clsp.levels
-                                     if v['price'] >= highPrice)  # TODO: has to be redefined using RawPriceClusterLevels
-            self.resistVal = max(v['price'] for v in self.clrs.levels
-                                        if v['price'] <= lowPrice)  # TODO: has to be redefined using RawPriceClusterLevels
 
-        self.lines.support[0] = self.supportVal
-        self.lines.resistance[0] = self.resistVal
+        if not(self.clsp.levels is None or self.clrs.levels is None):
+            arr_sp = []
+            for v in self.prev_sp:
+                if v['price'] >= highPrice:
+                    arr_sp.append(v['price'])
+            if len(arr_sp) != 0:
+                self.lines.support[0] = min(arr_sp)
+            else:
+                self.lines.support[0] = self.supportVal
+
+            arr_rs = []
+            for v in self.prev_rs:
+                if v['price'] <= lowPrice:
+                    arr_rs.append(v['price'])
+            if len(arr_rs) != 0:
+                self.lines.resistance[0] = max(arr_rs)
+            else:
+                self.lines.resistance[0] = self.resistVal
+
+            self.prev_rs = self.clrs.levels
+            self.prev_sp = self.clsp.levels
+        else:
+            arr_sp = []
+            for v in self.prev_sp:
+                if v['price'] >= highPrice:
+                    arr_sp.append(v['price'])
+
+            if len(arr_sp) != 0:
+                self.lines.support[0] = min(arr_sp)
+            else:
+                self.lines.support[0] = self.supportVal
+
+            arr_rs = []
+            for v in self.prev_rs:
+                if v['price'] <= lowPrice:
+                    arr_rs.append(v['price'])
+
+            if len(arr_rs) != 0:
+                self.lines.resistance[0] = max(arr_rs)
+            else:
+                self.lines.resistance[0] = self.resistVal
+
         print(str(self.lines.support[0]) + ' ' + str(self.lines.resistance[0]) + ' ' + str(self.cnt))
