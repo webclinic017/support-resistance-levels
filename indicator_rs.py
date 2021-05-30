@@ -45,16 +45,14 @@ class RSIndricator(bt.Indicator):
     plotinfo = dict(subplot=False)  # Для отрисовки Индикатора на основном графике
 
     def __init__(self):
-        df_data = convert_to_df(self.datas[0])
-
-        self.csv_data = pd.read_csv('datas/orcl-1995-2014.txt')
+        # self.csv_data = pd.read_csv('datas/orcl-1995-2014.txt')
         self.clsp = RawPriceClusterLevels(None, merge_percent=0.25, use_maximums=True, bars_for_peak=91)
         self.clrs = RawPriceClusterLevels(None, merge_percent=0.25, use_maximums=False, bars_for_peak=91)
 
     def next(self):
-
-        self.clsp.fit(self.csv_data)
-        self.clrs.fit(self.csv_data)
+        df_data = convert_to_df(self.datas[0])
+        self.clsp.fit(df_data)
+        self.clrs.fit(df_data)
 
         if self.datas[0].close[-1] <= self.datas[0].open[-1]:
             highPrice = self.datas[0].open[-1]
@@ -67,5 +65,5 @@ class RSIndricator(bt.Indicator):
                                     v['price'] >= highPrice)  # TODO: has to be redefined using RawPriceClusterLevels
         self.lines.resistance[0] = max(v['price'] for v in self.clrs.levels if
                                        v['price'] <= lowPrice)  # TODO: has to be redefined using RawPriceClusterLevels
-        print(self.lines.support[0])
-        print(self.lines.resistance[0])
+        # print(self.lines.support[0])
+        # print(self.lines.resistance[0])
