@@ -1,7 +1,8 @@
 # Индикатор для фреймворка Backtrader - Линии поддержки и сопротивления
-
-
+from random import random
+import pandas as pd
 import backtrader as bt  # Импортируем backtrader
+
 from pricelevels.cluster import RawPriceClusterLevels
 
 
@@ -22,6 +23,13 @@ class RSIndricator(bt.Indicator):
 
     plotinfo = dict(subplot=False)  # Для отрисовки Индикатора на основном графике
 
+    def __init__(self):
+        df = pd.read_csv('datas/orcl-1995-2014.txt')
+        cl = RawPriceClusterLevels(None, merge_percent=0.25, use_maximums=True, bars_for_peak=91)
+        cl.fit(df)
+        self.levels = cl.levels
+        print(self.levels)
+
     def next(self):
-        self.lines.support[0] = 25  # TODO: has to be redefined using RawPriceClusterLevels
+        self.lines.support[0] = self.levels[-1]['price']  # TODO: has to be redefined using RawPriceClusterLevels
         self.lines.resistance[0] = 35  # TODO: has to be redefined using RawPriceClusterLevels
