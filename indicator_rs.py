@@ -64,17 +64,12 @@ class RSIndricator(bt.Indicator):
         self.clrs.fit(df_data)
 
         self.cnt += 1
-        if self.datas[0].close[-1] <= self.datas[0].open[-1]:
-            highPrice = self.datas[0].open[-1]
-            lowPrice = self.datas[0].close[-1]
-        else:
-            highPrice = self.datas[0].close[-1]
-            lowPrice = self.datas[0].open[-1]
+        closePrice = self.datas[0].close[-1]
 
         if not(self.clsp.levels is None or self.clrs.levels is None):
             arr_sp = []
             for v in self.prev_sp:
-                if v['price'] >= highPrice:
+                if v['price'] >= closePrice:
                     arr_sp.append(v['price'])
             if len(arr_sp) != 0:
                 self.lines.support[0] = min(arr_sp)
@@ -83,7 +78,7 @@ class RSIndricator(bt.Indicator):
 
             arr_rs = []
             for v in self.prev_rs:
-                if v['price'] <= lowPrice:
+                if v['price'] <= closePrice:
                     arr_rs.append(v['price'])
             if len(arr_rs) != 0:
                 self.lines.resistance[0] = max(arr_rs)
@@ -95,7 +90,7 @@ class RSIndricator(bt.Indicator):
         else:
             arr_sp = []
             for v in self.prev_sp:
-                if v['price'] >= highPrice:
+                if v['price'] >= closePrice:
                     arr_sp.append(v['price'])
 
             if len(arr_sp) != 0:
@@ -105,7 +100,7 @@ class RSIndricator(bt.Indicator):
 
             arr_rs = []
             for v in self.prev_rs:
-                if v['price'] <= lowPrice:
+                if v['price'] <= closePrice:
                     arr_rs.append(v['price'])
 
             if len(arr_rs) != 0:
