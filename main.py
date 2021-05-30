@@ -23,9 +23,9 @@ if __name__ == '__main__':
     data = bt.feeds.YahooFinanceCSVData(
         dataname=datapath,
         # Do not pass values before this date
-        fromdate=datetime.datetime(2000, 1, 1),
+        fromdate=datetime.datetime(2000, 1, 3),
         # Do not pass values before this date
-        todate=datetime.datetime(2000, 12, 31),
+        todate=datetime.datetime(2000, 1, 20),
         # Do not pass values after this date
         reverse=False)
 

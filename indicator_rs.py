@@ -6,6 +6,27 @@ import backtrader as bt  # Импортируем backtrader
 from pricelevels.cluster import RawPriceClusterLevels
 
 
+def convert_to_df(data):
+    '''
+    Convert backtrader Datafeed(datas) to Pandas DataFrame (format for RawPriceClusterLevels)
+    :param data: data for converting (self.datas[0] - in Indicator)
+    :return: data in pandas df
+    '''
+    # Process of preparing data
+    rowData = pd.DataFrame(columns=['Datetime', 'Open', 'High', 'Low', 'Close', 'Volume'])
+    for i, candle in enumerate(data):
+        print(i)
+        rowData = rowData.append({
+            'Datetime': data.datetime.date(i),
+            'Open': data.open[i],
+            'High': data.high[i],
+            'Low': data.low[i],
+            'Close': data.close[i],
+            'Volume': data.volume[i]
+        }, ignore_index=True)
+
+    return rowData
+
 class RSIndricator(bt.Indicator):
     '''
     Класс индикатора линиий поддержки и сопротивления Backtrader
@@ -29,6 +50,9 @@ class RSIndricator(bt.Indicator):
         cl.fit(df)
         self.levels = cl.levels
         print(self.levels)
+        a = convert_to_df(self.datas[0])
+        print(a)
+
 
     def next(self):
         self.lines.support[0] = self.levels[-1]['price']  # TODO: has to be redefined using RawPriceClusterLevels
