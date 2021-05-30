@@ -1,4 +1,5 @@
 # Индикатор для фреймворка Backtrader - Линии поддержки и сопротивления
+import datetime
 from random import random
 import pandas as pd
 import backtrader as bt  # Импортируем backtrader
@@ -15,7 +16,7 @@ def cut_and_convert_to_df(data, size):
     '''
     # Process of preparing data
     rowData = pd.DataFrame(columns=['Datetime', 'Open', 'High', 'Low', 'Close', 'Volume'])
-    dataAsDict = dict()  # TODO: have to pass param which defines amount of bars before now to calculate levels
+    dataAsDict = dict()
     dataAsDict['open'] = data.open.get(size=size)
     dataAsDict['high'] = data.high.get(size=size)
     dataAsDict['low'] = data.low.get(size=size)
@@ -23,18 +24,22 @@ def cut_and_convert_to_df(data, size):
     dataAsDict['volume'] = data.volume.get(size=size)
     dataAsDict['datetime'] = data.datetime.get(size=size)
 
+    n = len(data.get(size=size))
+    if n == 0:
+        return rowData
 
-    for i, candle in enumerate(data):
+    for i in range(n):
         rowData = rowData.append({
-            'Datetime': data.datetime.date(i),
-            'Open': data.open[i],
-            'High': data.high[i],
-            'Low': data.low[i],
-            'Close': data.close[i],
-            'Volume': data.volume[i]
+            'Datetime': datetime.date.fromordinal(int(dataAsDict['datetime'][i])),
+            'Open': dataAsDict['open'][i],
+            'High': dataAsDict['high'][i],
+            'Low': dataAsDict['low'][i],
+            'Close': dataAsDict['close'][i],
+            'Volume': dataAsDict['volume'][i]
         }, ignore_index=True)
 
     return rowData
+
 
 class RSIndricator(bt.Indicator):
     '''
@@ -55,8 +60,8 @@ class RSIndricator(bt.Indicator):
 
     def __init__(self):
         # self.csv_data = pd.read_csv('datas/orcl-1995-2014.txt')
-        self.clsp = RawPriceClusterLevels(None, merge_percent=0.7, use_maximums=True, bars_for_peak=21)
-        self.clrs = RawPriceClusterLevels(None, merge_percent=0.7, use_maximums=False, bars_for_peak=21)
+        self.clsp = RawPriceClusterLevels(None, merge_percent=0.7, use_maximums=True, bars_for_peak=3)
+        self.clrs = RawPriceClusterLevels(None, merge_percent=0.7, use_maximums=False, bars_for_peak=3)
         print('support resistance cnt')
         self.cnt = 0
         self.supportVal = 0
@@ -64,11 +69,11 @@ class RSIndricator(bt.Indicator):
 
         self.prev_rs = []
         self.prev_sp = []
-        #self.lines.support[0] = 0
-        #self.lines.resistance[0] = 0
+        # self.lines.support[0] = 0
+        # self.lines.resistance[0] = 0
 
     def next(self):
-        df_data = cut_and_convert_to_df(self.data, 21)  # TODO: parameter 21
+        df_data = cut_and_convert_to_df(self.data, 10)
         if df_data.size == 0:
             return
 
@@ -78,7 +83,7 @@ class RSIndricator(bt.Indicator):
         self.cnt += 1
         closePrice = self.datas[0].close[-1]
 
-        if not(self.clsp.levels is None or self.clrs.levels is None):
+        if not (self.clsp.levels is None or self.clrs.levels is None):
             arr_sp = []
             for v in self.prev_sp:
                 if v['price'] >= closePrice:
